@@ -1,0 +1,17 @@
+.navbar {
+    background-color: rgba(114, 46, 209, 0.8); /* Purple background with opacity */
+    backdrop-filter: blur(10px); /* Apply blur effect */
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top:0;
+  }
+  
+  .brand-text {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
