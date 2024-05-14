@@ -20,8 +20,24 @@ const AddEntity = () => {
     setAttributes([...attributes, { name: '', type: '' }]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const data ={
+      entity:entityName,
+      attr:attributes
+    }
+    try{
+      const res = await fetch("https://localhost:8000/vahan/addEntity",{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+
+      })
+    }catch(err){
+      console.log({message:err});
+    }
     console.log('Submitted:', { entityName, attributes });
     navigate('/');
   };
