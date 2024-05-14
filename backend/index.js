@@ -4,18 +4,18 @@ const cors = require("cors")
 const app = express();
 // Create MySQL connection
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'qwerty123',
-  database: 'vahandb'
+    host: 'localhost',
+    user: 'root',
+    password: 'qwerty123',
+    database: 'vahandb'
 });
 
 
 
 // Connect to MySQL
 connection.connect(err => {
-  if (err) throw err;
-  console.log('Connected to MySQL database');
+    if (err) throw err;
+    console.log('Connected to MySQL database');
 });
 
 // Middleware
@@ -25,28 +25,36 @@ app.use(express.urlencoded({ extended: false }));
 
 
 // Routes
-// Example: Create a new entity
-// app.post('/api/entities', (req, res) => {
-//   const { entityName } = req.body;
-//   const query = `INSERT INTO entities (name) VALUES ('${entityName}')`;
-//   connection.query(query, (err, result) => {
-//     if (err) throw err;
-//     console.log('New entity added:', result);
-//     res.send(result);
-//   });
-// });
-app.get('/',(req,res)=>{
-    res.send("db ")
-})
-// Example: Get all entities
+function createEntityTable(entityName, attributes) {
+    let query = `CREATE TABLE IF NOT EXISTS ${entityName} (`;
+    for (const attr in attributes) {
+        query += `${attributes[attr].name} ${attributes[attr].type},`;
+    }
+    query = query.slice(0, -1) + ')';
+    connection.query(query, err => {
+        if (err) {
+            console.error('Error creating table:', err);
+        } else {
+            console.log(`Table ${entityName} created successfully`);
+        }
+    });
+}
+
 app.get('/allEntities', (req, res) => {
-  const query = 'show tables';
-  connection.query(query, (err, results) => {
-    if (err) throw err;
-    // console.log('Entities:', results);
-    res.send(results);
-  });
+    const query = 'show tables';
+    connection.query(query, (err, results) => {
+        if (err) throw err;
+        // console.log('Entities:', results);
+        res.send(results);
+    });
 });
+
+app.post('/vahan/addEntity', (req, res) => {
+    console.log(req.body);
+    const { entity, attr } = req.body;
+    createEntityTable(entity, attr);
+    res.json({ message: `Entity ${entity} created successfully` });
+})
 
 // Example: Update an entity
 // app.put('/api/entities/:id', (req, res) => {
@@ -73,5 +81,5 @@ app.get('/allEntities', (req, res) => {
 
 // Start server
 app.listen(8000, () => {
-  console.log(`Server is running on port 8000`);
+    console.log(`Server is running on port 8000`);
 });

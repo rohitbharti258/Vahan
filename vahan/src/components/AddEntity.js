@@ -27,19 +27,22 @@ const AddEntity = () => {
       attr:attributes
     }
     try{
-      const res = await fetch("https://localhost:8000/vahan/addEntity",{
+      console.log(data)
+      // if(!entityName.trim().length>0 || attributes.every(a =>
+      //    a.name.trim().length>0 && a.type.trim().length>0))
+      //   return;
+      const res = await fetch("http://localhost:8000/vahan/addEntity",{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-
       })
+      console.log('Submitted:', { entityName, attributes });
+      navigate('/');
     }catch(err){
       console.log({message:err});
     }
-    console.log('Submitted:', { entityName, attributes });
-    navigate('/');
   };
 
   return (

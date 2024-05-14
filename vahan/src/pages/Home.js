@@ -37,8 +37,8 @@ const Home = () => {
         </Link>
       </div>
 
-      {entities.map((entity) => (
-        <div className='container' key={entity.id}>
+      {entities.map((entity,index) => (
+        <div className='container' key={index}>
           <div className="entity">
             <h2>{entity.Tables_in_vahandb}</h2>
             <div className='entityButton'>
