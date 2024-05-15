@@ -57,7 +57,9 @@ button{
   color:white;
   margin: 10px;
 }
-
+/* .button :hover{
+  background-color: #5fa163;
+} */
 .button button{
   display: block;
   width: 100%;
@@ -117,4 +119,21 @@ button{
 
 .insertConatiner{
   padding:2px;
+}
+
+.dataform{
+  width:auto;
+}
+
+/* .datarow{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+} */
+.buttons{
+  display: flex;
+}
+.alterButton{
+  width:20px;
+  font-size: 10px;
 }

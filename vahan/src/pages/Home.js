@@ -29,27 +29,29 @@ const Home = () => {
   }, [])
   return (
     <div>
-      <div className='button'>
+      <div className='button create-entity-button'>
         <Link  to='/createEntity'>
           <button type="button" onClick={() => { handleAddEnitity() }}>
             Create New Entity
           </button>
         </Link>
       </div>
-
+      {entities.length>0 ?
+<>
       {entities.map((entity,index) => (
         <div className='container' key={index}>
           <div className="entity">
             <h2>{entity.Tables_in_vahandb}</h2>
             <div className='entityButton'>
               <Link to={`/insertData/${entity.Tables_in_vahandb}`} ><button type="button">Insert Data</button></Link>
-              <Link to="/deleteData"><button type="button">Delete Data</button></Link>
-              <Link to="/updateData"><button type="button">Update Data</button></Link>
-              <Link to="/readData"><button type="button">Read Data</button></Link>
+              <Link to={`/readData/${entity.Tables_in_vahandb}`}><button type="button">Delete Data</button></Link>
+              <Link to={`/updateData/${entity.Tables_in_vahandb}`}><button type="button">Update Data</button></Link>
+              <Link to={`/readData/${entity.Tables_in_vahandb}`}><button type="button">Read Data</button></Link>
             </div>
           </div>
         </div>
       ))}
+      </>:<div style={{padding:"20px"}}>No Entity Created Yet</div>}
     </div>
   )
 }
