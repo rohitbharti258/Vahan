@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
+import '../css/Form.css'
+import '../css/ReadData.css'
+import Spinner from '../components/Spinner';
 
 const ReadData = () => {
     const { entityName } = useParams();
     const [tableData, setTableData] = useState([]);
     const [attr, setAttr] = useState([]);
+    const [isLoading,setIsLoading]  =useState(false);
     const navigate = useNavigate();
     const handleClick = async (id, method) => {
-        console.log(id);
+        setIsLoading(true);
         const idData ={
             id:id
         }
@@ -22,8 +26,11 @@ const ReadData = () => {
             })
 
             if(res.ok){
+                setIsLoading(false);
+                setTableData(tableData.filter((val)=> val.ID!=id))
+                // fetchData();
                 // navigate(`/readData/${entityName}`)
-                window.location.reload();
+                // window.location.reload();
             }
         } catch (err) {
             console.log({ message: err });
@@ -70,14 +77,16 @@ const ReadData = () => {
                             <>
                                 <tr key={index}>
                                     <td >{index + 1}</td>
-                                    {Object.values(row).map((value, index) => (
+                                    {Object.values(row).map((value) => (
                                         <td>{value}</td>
                                     )
                                     )}
                                 </tr>
-                                <div key={index + 1} className='buttons'>
-                                    <button className="alterButton" type="button" onClick={(e) => handleClick(tableData[index].id, "PUT")}>Update</button>
-                                    <button className="alterButton" type="button" onClick={(e) => handleClick(tableData[index].id, "DELETE")}>Delete</button>
+                                <div key={index +1} className='buttons'>
+                                    <Link to={`/updateData/${entityName}/${tableData[index].ID}`}>
+                                        <button className="alterButton yellow" type="button" >Update</button>
+                                    </Link>
+                                    <button className="alterButton red" type="button" style={{marginLeft:'20px'}} onClick={(e) => handleClick(tableData[index].ID, "DELETE")}>Delete</button>
                                 </div>
 
                             </>

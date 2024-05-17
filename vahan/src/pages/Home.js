@@ -1,25 +1,38 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react';
-import '../App.css'
-import { Link } from 'react-router-dom';
+import '../css/Home.css'
+import '../css/Form.css'
+import { Link, useNavigate } from 'react-router-dom';
+import Spinner from '../components/Spinner';
 const Home = () => {
-  const [entities, setEntities] = useState([
-    
-  ]);
+  const [entities, setEntities] = useState([]);
+  const [isLoading,setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const handleDeleteEntity = async (tableName) => {
+    setIsLoading(true)
+    try{
+      const res = await fetch(`http://localhost:8000/vahan/deleteEntity/${tableName}`,{
+        method:"DELETE"
+      });
 
-  const handleAddEnitity = () => {
+      if(res.ok) {
+        fetchEntitites()
+        setIsLoading(true)
+      };
 
+    }catch(err){
+      console.log(err);
+    }
   }
   const fetchEntitites = async () => {
+    setIsLoading(true);
     try {
       const res = await fetch(`http://localhost:8000/allEntities`, {
         method: "GET",
       });
       const response = await res.json();
-      // console.log(response)
       setEntities(response);
-      // console.log(entities)
-
+      setIsLoading(false)
     } catch (err) {
       console.log({ error: err });
     }
@@ -28,10 +41,14 @@ const Home = () => {
     fetchEntitites();
   }, [])
   return (
-    <div>
+      <div>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <>
       <div className='button create-entity-button'>
         <Link  to='/createEntity'>
-          <button type="button" onClick={() => { handleAddEnitity() }}>
+          <button type="button">
             Create New Entity
           </button>
         </Link>
@@ -43,16 +60,18 @@ const Home = () => {
           <div className="entity">
             <h2>{entity.Tables_in_vahandb}</h2>
             <div className='entityButton'>
-              <Link to={`/insertData/${entity.Tables_in_vahandb}`} ><button type="button">Insert Data</button></Link>
-              <Link to={`/readData/${entity.Tables_in_vahandb}`}><button type="button">Delete Data</button></Link>
-              <Link to={`/updateData/${entity.Tables_in_vahandb}`}><button type="button">Update Data</button></Link>
-              <Link to={`/readData/${entity.Tables_in_vahandb}`}><button type="button">Read Data</button></Link>
+              <Link to={`/insertData/${entity.Tables_in_vahandb}`} ><button className='HomeButtons green' type="button">Insert Data</button></Link>
+              <Link to={`/readData/${entity.Tables_in_vahandb}`}><button className='HomeButtons yellow' type="button">Read Data</button></Link>
+              <button  className='HomeButtons red'type="button" onClick={()=>handleDeleteEntity(entity.Tables_in_vahandb)}>Delete Entity</button>
             </div>
           </div>
         </div>
       ))}
       </>:<div style={{padding:"20px"}}>No Entity Created Yet</div>}
-    </div>
+      </>
+      )}
+      </div>
+  
   )
 }
 

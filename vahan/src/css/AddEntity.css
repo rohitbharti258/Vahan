@@ -1,0 +1,21 @@
+.entityName {
+    max-width: 600px;
+    margin: 10px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+}
+
+.entityName label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.entityName input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
