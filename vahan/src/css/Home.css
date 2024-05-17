@@ -31,13 +31,17 @@
 }
 
 .HomeButtons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 7px;
     background-color: #4CAF50;
-    margin-top: 5px;
+    /* margin-top: 5px; */
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size:15px;
 }
 
 

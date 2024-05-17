@@ -3,7 +3,10 @@ import { useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import '../css/Form.css'
 import '../css/ReadData.css'
+import { GrUpdate } from "react-icons/gr";
 import Spinner from '../components/Spinner';
+import { MdDeleteForever } from "react-icons/md";
+
 
 const ReadData = () => {
     const { entityName } = useParams();
@@ -84,9 +87,9 @@ const ReadData = () => {
                                 </tr>
                                 <div key={index +1} className='buttons'>
                                     <Link to={`/updateData/${entityName}/${tableData[index].ID}`}>
-                                        <button className="alterButton yellow" type="button" >Update</button>
+                                        <button className="alterButton yellow" type="button" ><GrUpdate/></button>
                                     </Link>
-                                    <button className="alterButton red" type="button" style={{marginLeft:'20px'}} onClick={(e) => handleClick(tableData[index].ID, "DELETE")}>Delete</button>
+                                    <button className="alterButton red" type="button" style={{marginLeft:'20px'}} onClick={(e) => handleClick(tableData[index].ID, "DELETE")}><MdDeleteForever/></button>
                                 </div>
 
                             </>
