@@ -1,5 +1,10 @@
 .alterButton{
-    width:20px;
-    font-size: 10px;
-    margin-left:10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  }
+  .dataRow{
+    /* width:600px; */
+    background-color: antiquewhite;
   }

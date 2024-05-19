@@ -10,11 +10,11 @@ const connection = mysql.createConnection({
     database: 'vahandb'
 });
 
-connection.connect(err => {
+connection.connect(err => { 
     if (err) throw err;
     console.log('Connected to MySQL database');
 });
-
+ 
 app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -23,7 +23,7 @@ function createEntityTable(entityName, attributes,res) {
     let query = `CREATE TABLE IF NOT EXISTS \`${entityName}\` (`;
     query+="ID INT AUTO_INCREMENT PRIMARY KEY,"
     for (const attr in attributes) {
-        query += `\`${attributes[attr].name}\` ${attributes[attr].type},`;
+        query += `\`${attributes[attr].name}\` ${attributes[attr].type} Default Null,`;
     }
     query = query.slice(0, -1) + ')';
     connection.query(query, (err,results) => { 
@@ -31,7 +31,7 @@ function createEntityTable(entityName, attributes,res) {
 
         if (err) {
             console.error('Error creating table:', err); 
-            res.status(500).send('Internal Server Error');
+            res.status(500).send(err);
             return;
         }
         if(results.warningStatus>0){
@@ -45,29 +45,32 @@ function createEntityTable(entityName, attributes,res) {
 app.get('/allEntities', (req, res) => {
     const query = 'show tables'; 
     connection.query(query, (err, results) => { 
-        if (err) throw err;
-        // console.log('Entities:', results);
+        if (err)  {
+          res.status(400).send(err);
+          return;
+        }
         res.send(results);
     });
 });
 
 app.post('/vahan/addEntity', (req, res) => {
-    // console.log(req.body);
     const { entity, attr } = req.body;
     createEntityTable(entity, attr,res);
-    // res.json({ message: `Entity \`${entity}\` created successfully` });
 })
 
 app.post('/vahan/addData/:entityName',(req,res)=>{
     const entityName = req.params.entityName;
-    const {attributes,value} = req.body;
+    const {attributes,value,index} = req.body;
+    
+    if(index!=null) {
+        value[index] = new Date(value[index]);   
+    }
     const attrList = Object.values(attributes).join(', ');
     const valueList = attributes.map((index)=> attributes[index]='?');
     valueList.join(', ')
     console.log(valueList.length)
     const query = `INSERT INTO \`${entityName}\` (${attrList}) VALUES(${ valueList })`;
 
-    // return new Promise((resolve, reject) => {
         connection.query(query, Object.values(value), (err,results) => {
           console.log(results)
           if (err) {
@@ -87,9 +90,11 @@ app.get('/vahan/getData/:entityName',(req,res)=>{
     const entity = req.params.entityName;
     const query = `SELECT * FROM \`${entity}\``;
     connection.query(query, (err, results) => {
-    if (err) {
-      console.error('Error reading entries:', err);
+    if (err)  {
+      res.status(400).send(err);
+      return;
     } else {
+      console.log(results)
       res.send(results);
     }
   });
@@ -100,7 +105,7 @@ app.get('/vahan/getattributes/:entityName',(req,res)=>{
     const query = `SHOW COLUMNS FROM \`${entity}\``;
     connection.query(query, (err, results) => {
     if (err) {
-      console.error('Error reading entries:', err);
+      res.status(400).send(err);
     } else {
       res.send(results);
     }
@@ -130,8 +135,10 @@ app.delete('/vahan/deleteData/:entityName/', (req, res) => {
   const id = req.body.id;
   const query = `DELETE FROM \`${entityName}\` WHERE id = ${id}`;
   connection.query(query, (err, result) => {
-    if (err) throw err;
-    console.log('Data deleted:', result);
+    if (err) {
+      res.status(400).send(err);
+      return;
+    }
     res.status(200).send(result);
   });
 });
@@ -139,10 +146,12 @@ app.delete('/vahan/deleteData/:entityName/', (req, res) => {
 
 app.delete('/vahan/deleteEntity/:entityName/', (req, res) => {
   const { entityName} = req.params;
-  // const id = req.body.id;
   const query = `DROP TABLE \`${entityName}\``;
   connection.query(query, (err, result) => {
-    if (err) throw err;
+    if (err)  {
+      res.status(400).send(err);
+      return;
+    }
     console.log('Entity deleted:', result);
     res.send(result);
   });

@@ -7,10 +7,14 @@ import Spinner from '../components/Spinner';
 import { FaPlus } from "react-icons/fa6";
 import { MdDeleteForever } from "react-icons/md";
 import { CiRead } from "react-icons/ci";
+import {ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Home = () => {
   const [entities, setEntities] = useState([]);
   const [isLoading,setIsLoading] = useState(false);
+  // const[errorMessage,setErrorMessage]  = useState('')
+
   const navigate = useNavigate();
   const handleDeleteEntity = async (tableName) => {
     setIsLoading(true)
@@ -20,9 +24,24 @@ const Home = () => {
       });
 
       if(res.ok) {
-        fetchEntitites()
-        setIsLoading(true)
-      };
+        setEntities(entities.filter((val) => val.Tables_in_vahandb != tableName))
+        setIsLoading(false)
+        toast.success('Table Deleted successFully', {
+          position: "top-center",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          });
+      }else{
+        toast.error('Table cant be Deleted', {
+          position: "top-center",
+          autoClose: 4000,
+          hideProgressBar: false,
+          pauseOnHover: false,
+          closeOnClick: true,
+          });
+      }
 
     }catch(err){
       console.log(err);
@@ -35,9 +54,40 @@ const Home = () => {
         method: "GET",
       });
       const response = await res.json();
+      // console.log(response);
+
+      if(!res.ok){
+        // setErrorMessage("Failed to get entitites")
+        setIsLoading(false);
+        toast.error('Failed to get entitites', {
+          position: "top-center",
+          autoClose: 4000,
+          hideProgressBar: false,
+          pauseOnHover: false,
+          closeOnClick: true,
+          });
+        return;
+      }
       setEntities(response);
-      setIsLoading(false)
+      setIsLoading(false);
+      // toast.success('Entities fetched', {
+      //   position: "top-center",
+      //   autoClose: 2000,
+      //   hideProgressBar: false,
+      //   pauseOnHover: false,
+      //   closeOnClick: true,
+      //   });
+      
     } catch (err) {
+      // setErrorMessage("Failed to get entitites")
+      toast.error('Internal Server Error', {
+        position: "top-center",
+        autoClose: 4000,
+        hideProgressBar: false,
+        pauseOnHover: false,
+        closeOnClick: true,
+        });
+      setIsLoading(false);
       console.log({ error: err });
     }
   }
@@ -56,13 +106,16 @@ const Home = () => {
             Create New Entity
           </button>
         </Link>
+        
       </div>
+      {/* {successMessage && <p style={{textAlign:'center',color:'green'}}>{successMessage}</p>} */}
+
       {entities.length>0 ?
 <>
       {entities.map((entity,index) => (
         <div className='container' key={index}>
           <div className="entity">
-            <h2>{entity.Tables_in_vahandb}</h2>
+            <Link to={`/readData/${entity.Tables_in_vahandb}`}><h2>{entity.Tables_in_vahandb}</h2></Link>
             <div className='entityButton'>
               <Link to={`/insertData/${entity.Tables_in_vahandb}`} ><button className='HomeButtons green' type="button"><FaPlus /></button></Link>
               <Link to={`/readData/${entity.Tables_in_vahandb}`}><button className='HomeButtons yellow' type="button"><CiRead/></button></Link>
@@ -71,7 +124,12 @@ const Home = () => {
           </div>
         </div>
       ))}
-      </>:<div style={{padding:"20px"}}>No Entity Created Yet</div>}
+      </>:
+      <div style={{padding:"20px"}}>No Entity Created Yet</div>
+
+      // <div style={{padding:"20px",display:`${errorMessage===''?'block':'none'}`}}>No Entity Created Yet</div>
+      }
+      {/* {errorMessage && <p style={{color:'red',textAlign:"center"}}>{errorMessage}</p>} */}
       </>
       )}
       </div>

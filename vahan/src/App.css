@@ -1,5 +1,10 @@
 *{
   text-decoration: none;
+  scroll-behavior: smooth;
+  box-sizing:border-box;
+}
+h2{
+  color:Black;
 }
 body::-webkit-scrollbar {
   display: none;  /* Safari and Chrome */

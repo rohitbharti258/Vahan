@@ -4,32 +4,30 @@ import '../css/AddEntity.css'
 import '../css/Form.css'
 import Spinner from '../components/Spinner';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 const AddEntity = () => {
   const [entityName, setEntityName] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  // const [errorMessage, setErrorMessage] = useState('');
+  // const [successMessage, setSuccessMessage] = useState('');
   const [isLoading,setIsLoading] = useState(false);
   const [attributes, setAttributes] = useState([{ name: '', type: 'None' }]);
   const [dataType,setDataType] = useState([
     {type:'INT',value:'INT'},
     {type:'VARCHAR(255)',value:'VARCHAR(255)'},
-    {type:'BOOL',value:'BOOL'},
-    {type:'FLOAT',value:'FLOAT'},
-    {type:'DOUBLE',value:'DOUBLE'},
     {type:'DATE(YYYY-MM-DD)',value:'DATE'}
   ])
   const navigate = useNavigate();
   
   const handleEntityNameChange = (e) => {
-    setErrorMessage('')
-    setSuccessMessage('')
+    // setErrorMessage('')
+    // setSuccessMessage('')
     setEntityName(e.target.value);
   };
 
   const handleAttributeChange = (index, key, value) => {
-    setErrorMessage('')
-    setSuccessMessage('')
+    // setErrorMessage('')
+    // setSuccessMessage('')
     let newValue = value.replace(/\s+/g,'_');
     newValue.trim();
     const updatedAttributes = [...attributes];
@@ -45,6 +43,17 @@ const AddEntity = () => {
     setIsLoading(true);
     e.preventDefault();
     const newEntity = entityName.trim();
+    if(newEntity.length===0) {
+      toast.error('Entity name should be of length greater than 0 ', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        });
+        setIsLoading(false)
+      return;
+    }
 
     const data ={
       entity:newEntity,
@@ -58,30 +67,56 @@ const AddEntity = () => {
         },
         body: JSON.stringify(data)
       })
-      if(!res.ok){
-        throw new Error('Failed to create table');
+      console.log(res);
+      if(!res.ok && res.status===500){
+        // setErrorMessage("Failed to create table")
+        setIsLoading(false);
+        toast.error('Failure , Please check datatype for once', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          });
+        return;
       }
 
       const message = await res.text();
       console.log(res)
       if(res.status===200){
-        setSuccessMessage(message);
-        setTimeout(()=>{
-          setIsLoading(false)
+        toast.success('New Entity Created', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          });
           navigate('/');
-        },2000)
       } else {
-        setErrorMessage(message);
+        toast.error(message, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          });
       }
     }catch(err){
-      setErrorMessage("Failed To create Table");
+      toast.error('ERR Connection Refused', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        });
+      // setErrorMessage("Failed To create Table");
     }
   };
 
   return (
     
     <>
-    {isLoading && successMessage?(
+    {isLoading?(
       <Spinner/>
     ):(
       <>
@@ -133,8 +168,8 @@ const AddEntity = () => {
         <button type="button" onClick={handleAddAttribute}>Add Attribute</button>
         <button type="submit">Create Entity</button>
       </form>
-      {errorMessage && <div style={{textAlign:'center' ,color:'red'}}>Error: {errorMessage}</div>}
-      {successMessage && <div style={{textAlign:'center' ,color:'green'}}>Success: {successMessage} Redirecting to the home page</div>}
+      {/* {errorMessage && <div style={{textAlign:'center' ,color:'red'}}>Error: {errorMessage}</div>} */}
+      {/* {successMessage && <div style={{textAlign:'center' ,color:'green'}}>Success: {successMessage} Redirecting to the home page</div>} */}
     </>
     )
   }

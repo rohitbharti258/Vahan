@@ -6,18 +6,20 @@ import '../css/ReadData.css'
 import { GrUpdate } from "react-icons/gr";
 import Spinner from '../components/Spinner';
 import { MdDeleteForever } from "react-icons/md";
+import { toast } from 'react-toastify';
 
 
 const ReadData = () => {
     const { entityName } = useParams();
     const [tableData, setTableData] = useState([]);
     const [attr, setAttr] = useState([]);
-    const [isLoading,setIsLoading]  =useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    // const [errorMessage,setErrorMessage] = useState('')
     const handleClick = async (id, method) => {
         setIsLoading(true);
-        const idData ={
-            id:id
+        const idData = {
+            id: id
         }
         try {
             const res = await fetch(`http://localhost:8000/vahan/deleteData/${entityName}`, {
@@ -27,13 +29,32 @@ const ReadData = () => {
                 },
                 body: JSON.stringify(idData)
             })
-
-            if(res.ok){
+            console.log(res);
+            
+            if (res.ok) {
+                // setErrorMessage('')
+                setTableData(tableData.filter((val) => val.ID != id))
+                toast.success('Entry Deleted successFully', {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    });
+                  navigate(`/readData/${entityName}`)
                 setIsLoading(false);
-                setTableData(tableData.filter((val)=> val.ID!=id))
-                // fetchData();
-                // navigate(`/readData/${entityName}`)
-                // window.location.reload();
+            }
+            else{
+                // setErrorMessage('Failed to Delete data . Retry!!! ');
+                setIsLoading(false);
+                toast.error('Failure during Deleteion', {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    });
+                return;
             }
         } catch (err) {
             console.log({ message: err });
@@ -47,10 +68,29 @@ const ReadData = () => {
                 throw new Error('Failed to fetch data');
             }
             const data = await response.json();
-            setTableData(data);
-            console.log(tableData)
-            const keys = Object.keys(data[0]);
+            
+            const keys =  Object.keys(data[0]);
             setAttr(keys);
+            // data.map((val,index)=>{
+            //    attr.map((key)=>{
+            //     console.log(typeof val[key])
+            //       if(typeof val[key]==='string' && val[key].includes('18:30:00.000Z')) {
+            //         console.log(val[key].substring(0,10))
+
+            //         new Date(val[key])
+            //       }
+            //    }) 
+            //     val.map((col)=>{
+            // console.log("col "+col);
+
+            //         if(col.contains('18:30:00.000Z')){
+            //             // data[val][col] =  
+            //         }
+                // })
+            // })
+            setTableData(data);
+            console.log(data)
+            
             console.log(attr)
         } catch (error) {
             console.error('Error:', error);
@@ -58,46 +98,57 @@ const ReadData = () => {
     };
 
     useEffect(() => {
+        // setErrorMessage('')
         fetchData();
     }, []);
 
     return (
-        <div className='form-container dataform'>
-            <h1>{entityName}</h1>
-            {tableData.length > 0 ?
-                <table>
-                    <thead>
-                        <td><strong>Sr. No</strong></td>
-                        {attr.map((attr, index) => (
+        <>
+            {isLoading ? (
+                <Spinner />
+            ):(
+                <>
+                    <div className='form-container dataform'>
+                        <h1>{entityName}</h1>
+                        {tableData.length > 0 ?
+                            <table>
+                                <thead>
+                                    <td><strong>Sr. No</strong></td>
+                                    {attr.map((attr, index) => (
 
-                            <th key={index}>
-                                <td>{attr}</td>
-                            </th>
-                        ))}
-                    </thead>
-                    <tbody>
-                        {tableData.map((row, index) => (
-                            <>
-                                <tr key={index}>
-                                    <td >{index + 1}</td>
-                                    {Object.values(row).map((value) => (
-                                        <td>{value}</td>
-                                    )
-                                    )}
-                                </tr>
-                                <div key={index +1} className='buttons'>
-                                    <Link to={`/updateData/${entityName}/${tableData[index].ID}`}>
-                                        <button className="alterButton yellow" type="button" ><GrUpdate/></button>
-                                    </Link>
-                                    <button className="alterButton red" type="button" style={{marginLeft:'20px'}} onClick={(e) => handleClick(tableData[index].ID, "DELETE")}><MdDeleteForever/></button>
-                                </div>
+                                        <th key={index}>
+                                            <td>{attr}</td>
+                                        </th>
+                                    ))}
+                                </thead>
+                                <tbody>
+                                    {tableData.map((row, index) => (
+                                        <>
+                                            <tr key={index}>
+                                                <td >{index + 1}</td>
+                                                {Object.values(row).map((value) => (
+                                                    <td>{value===null?"Null":value}</td>
+                                                )
+                                                )}
+                                            </tr>
+                                            <div key={index + 1} className='buttons'>
+                                                <Link to={`/updateData/${entityName}/${tableData[index].ID}`}>
+                                                    <button className="alterButton yellow" type="button" ><GrUpdate /></button>
+                                                </Link>
+                                                <button className="alterButton red" type="button" style={{ marginLeft: '20px' }} onClick={(e) => handleClick(tableData[index].ID, "DELETE")}><MdDeleteForever /></button>
+                                            </div>
+                                        </>
+                                    ))}
+                                </tbody>
+                            </table> : <>No Data to show</>}
+                    </div>
+        {/* {errorMessage && <p style={{textAlign:'center',color:'red'}}>{errorMessage}</p>} */}
 
-                            </>
-                        ))}
-                    </tbody>
+                </>
+            )
+            }
+        </>
 
-                </table> : <>No Data to show</>}
-        </div>
     );
 };
 
