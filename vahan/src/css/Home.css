@@ -5,7 +5,7 @@
     border: 2px solid transparent;
     background-color: aliceblue;
     border-radius: 10px;
-    backdrop-filter: blur(10px);    
+    backdrop-filter: blur(10px);  
 }
 .container:last-child{
     margin-bottom: 30px;
@@ -26,7 +26,7 @@
     display: block;
     width: 100%;
     padding: 10px;
-    /* margin: 10px; */
+    margin: 10px;
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -47,6 +47,9 @@
     cursor: pointer;
     font-size:15px;
 }
-
+.crudButtons{
+    display:flex;
+    align-items:center;
+}
 
 

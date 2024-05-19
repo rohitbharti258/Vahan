@@ -117,9 +117,9 @@ const Home = () => {
           <div className="entity">
             <Link to={`/readData/${entity.Tables_in_vahandb}`}><h2>{entity.Tables_in_vahandb}</h2></Link>
             <div className='entityButton'>
-              <Link to={`/insertData/${entity.Tables_in_vahandb}`} ><button className='HomeButtons green' type="button"><FaPlus /></button></Link>
-              <Link to={`/readData/${entity.Tables_in_vahandb}`}><button className='HomeButtons yellow' type="button"><CiRead/></button></Link>
-              <button  className='HomeButtons red'type="button" onClick={()=>handleDeleteEntity(entity.Tables_in_vahandb)}><MdDeleteForever/></button>
+              <Link to={`/insertData/${entity.Tables_in_vahandb}`} className='crudButtons'><button className='HomeButtons green' type="button"><FaPlus /></button></Link>
+              <Link to={`/readData/${entity.Tables_in_vahandb}`} className='crudButtons'><button className='HomeButtons yellow' type="button"><CiRead/></button></Link>
+              <span className='crudButtons'><button  className='HomeButtons red'type="button" onClick={()=>handleDeleteEntity(entity.Tables_in_vahandb)}><MdDeleteForever/></button></span>
             </div>
           </div>
         </div>

@@ -108,8 +108,9 @@ const ReadData = () => {
                 <Spinner />
             ):(
                 <>
+                <h1>{entityName}</h1>
+
                     <div className='form-container dataform'>
-                        <h1>{entityName}</h1>
                         {tableData.length > 0 ?
                             <table>
                                 <thead>
@@ -133,9 +134,9 @@ const ReadData = () => {
                                             </tr>
                                             <div key={index + 1} className='buttons'>
                                                 <Link to={`/updateData/${entityName}/${tableData[index].ID}`}>
-                                                    <button className="alterButton yellow" type="button" ><GrUpdate /></button>
+                                                    <button className="alterButton yellow" type="button" ><GrUpdate className='icons' /></button>
                                                 </Link>
-                                                <button className="alterButton red" type="button" style={{ marginLeft: '20px' }} onClick={(e) => handleClick(tableData[index].ID, "DELETE")}><MdDeleteForever /></button>
+                                                <span><button className="alterButton red" type="button"  onClick={(e) => handleClick(tableData[index].ID, "DELETE")}><MdDeleteForever className='icons' /></button></span>
                                             </div>
                                         </>
                                     ))}
