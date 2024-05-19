@@ -47,7 +47,9 @@ const ReadData = () => {
             else{
                 // setErrorMessage('Failed to Delete data . Retry!!! ');
                 setIsLoading(false);
-                toast.error('Failure during Deleteion', {
+                const text = await res.text();
+                const errmsg = await JSON.parse(text).sqlMessage;
+                toast.error(errmsg, {
                     position: "top-center",
                     autoClose: 3000,
                     hideProgressBar: false,

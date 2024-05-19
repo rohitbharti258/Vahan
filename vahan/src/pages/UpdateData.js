@@ -14,7 +14,7 @@ const UpdateData = () => {
   const [attrCount,setattrCount] = useState(1);
   const [isLoading,setIsLoading] = useState(true);
   const [errorMessage,setErrorMessage] = useState('');
-  const [dateKey,setKey] = useState('')
+  const [dateKey,setKey] = useState('None')
   const handleUpdateChange = (index, key, value) => {
     setErrorMessage('')
     console.log(key,value)
@@ -60,7 +60,9 @@ const UpdateData = () => {
           });
         navigate(`/readData/${entityName}`)
       }else{
-        toast.error('Failure. check Data type', {
+        const text = await res.text();
+        const errmsg = await JSON.parse(text).sqlMessage;
+        toast.error(errmsg, {
           position: "top-center",
           autoClose: 4000,
           hideProgressBar: false,
@@ -85,6 +87,15 @@ const UpdateData = () => {
         method: "GET",
       });
       if(!res.ok){
+        const text = await res.text();
+        const errmsg = await JSON.parse(text).sqlMessage;
+        toast.error(errmsg, {
+          position: "top-center",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          });
         setErrorMessage("Internal server error")
         setIsLoading(false);
         return;

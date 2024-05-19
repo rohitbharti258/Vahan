@@ -15,7 +15,9 @@ const AddEntity = () => {
   const [dataType,setDataType] = useState([
     {type:'INT',value:'INT'},
     {type:'VARCHAR(255)',value:'VARCHAR(255)'},
-    {type:'DATE(YYYY-MM-DD)',value:'DATE'}
+    {type:'DATE(YYYY-MM-DD)',value:'DATE'},
+    {type:'VARCHAR(20)',value:'VARCHAR(20)'}
+
   ])
   const navigate = useNavigate();
   
@@ -71,7 +73,9 @@ const AddEntity = () => {
       if(!res.ok && res.status===500){
         // setErrorMessage("Failed to create table")
         setIsLoading(false);
-        toast.error('Failure , Please check datatype for once', {
+        const text = await res.text();
+        const errmsg = await JSON.parse(text).sqlMessage;
+        toast.error(errmsg, {
           position: "top-center",
           autoClose: 3000,
           hideProgressBar: false,

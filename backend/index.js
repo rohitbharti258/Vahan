@@ -75,7 +75,7 @@ app.post('/vahan/addData/:entityName',(req,res)=>{
           console.log(results)
           if (err) {
             console.error('Error in inserting Data:', err); 
-            res.status(500).send('Internal Server Error');
+            res.status(500).send(err);
             return;
         }
         if(results.warningStatus>0){

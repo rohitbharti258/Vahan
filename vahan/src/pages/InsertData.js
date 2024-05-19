@@ -56,7 +56,9 @@ const InsertData = () => {
         },
         body: JSON.stringify(newData)
       })
-      // console.log(res)
+
+      
+      // console.log(await JSON.parse(text))
       if(res.ok) {
         setIsLoading(false)
         toast.success('Data Inserted successFully', {
@@ -68,7 +70,9 @@ const InsertData = () => {
           });
             navigate('/')
       }else{
-        toast.error('Failed to add data . Retry enter value with correct data type', {
+        const text = await res.text();
+        const errmsg = await JSON.parse(text).sqlMessage;
+        toast.error(errmsg, {
           position: "top-center",
           autoClose: 4000,
           hideProgressBar: false,
@@ -89,6 +93,7 @@ const InsertData = () => {
         pauseOnHover: false,
         });
       console.log({message:err});
+      setIsLoading(false);
     }
   }
   const fetchAttributes = async () => {
@@ -98,6 +103,7 @@ const InsertData = () => {
         method: "GET",
       });
       const response = await res.json();
+      response.shift();
       console.log(response)
       if(res.ok){
         setIsLoading(false)

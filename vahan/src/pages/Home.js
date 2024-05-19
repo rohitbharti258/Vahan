@@ -59,7 +59,9 @@ const Home = () => {
       if(!res.ok){
         // setErrorMessage("Failed to get entitites")
         setIsLoading(false);
-        toast.error('Failed to get entitites', {
+          const text = await res.text();
+          const errmsg = await JSON.parse(text).sqlMessage;
+          toast.error(errmsg, {
           position: "top-center",
           autoClose: 4000,
           hideProgressBar: false,
